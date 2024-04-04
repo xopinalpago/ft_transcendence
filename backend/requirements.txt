@@ -1,12 +1,4 @@
 Django
-gunicorn
+asgiref
+sqlparse
 psycopg2-binary
-django-cors-headers
-djangorestframework
-requests
-djangorestframework-simplejwt
-channels
-channels_redis
-python-socketio
-aiohttp
-uvicorn

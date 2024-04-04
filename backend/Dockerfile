@@ -1,23 +1,17 @@
 FROM python:3.12.1-slim-bullseye
 
-RUN apt-get update && apt-get install -y dumb-init
-
-RUN apt-get install -y netcat postgresql-client
-
-WORKDIR /usr/src/init
+ENV PIP_DISABLE_PIP_VERSION_CHECK 1
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
 WORKDIR /usr/src/app
 
-RUN pip install --upgrade pip
-
-COPY requirements.txt .
+COPY ./requirements.txt .
 
 RUN pip install -r requirements.txt
 
-COPY . /usr/src/app
+COPY . .
 
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONDONTWRITEBYTECODE=1
+EXPOSE 8000
 
-ENTRYPOINT ["dumb-init", "./start.sh"]
-# CMD ["python", "manage.py", "runserver", "127.0.0.1:8000"]
+ENTRYPOINT ["sh", "./run_server.sh"]
