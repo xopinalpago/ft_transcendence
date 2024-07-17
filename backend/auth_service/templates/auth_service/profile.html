@@ -1,0 +1,520 @@
+{% load static %}
+
+<style>
+    #top {
+        display: flex;
+        flex-direction: column;
+    }
+
+    body {
+        background-color: #ebebeb;
+        margin: 0;
+        padding: 0;
+        font-family: 'Tomorrow', sans-serif;
+        overflow-x: hidden;
+
+    }
+
+    .container-fluid {
+        margin: 0;
+        padding: 0;
+    }
+
+    .info-divider {
+        width: 200px;
+        border: 1px solid black;
+        margin: 20px auto;
+    }
+
+
+    .modal-body a {
+        display: block;
+        text-decoration: none;
+        margin-bottom: 10px;
+    }
+
+    .modal-right .modal-dialog {
+        margin-right: 0;
+        margin-left: auto;
+    }
+
+    .modal.fade:not(.show) .modal-dialog {
+        transform: translateX(100%);
+        transition: transform 0.5s ease-out;
+    }
+
+    .modal.show .modal-dialog {
+        transform: translateX(0);
+    }
+
+    .fa-bars {
+        font-size: 36px;
+    }
+
+    #Profil {
+        padding: 10px;
+        color: black;
+    }
+
+    #Chat {
+        padding: 10px;
+        color: black;
+    }
+
+    #Deconnexion {
+        padding: 10px;
+        color: black;
+    }
+
+    #Chat:hover , #Profil:hover {
+        box-shadow: 0 0 10px 5px rgba(0, 0, 255, 0.5);
+        cursor: pointer;
+    }
+
+    #Deconnexion:hover {
+        box-shadow: 0 0 10px 5px red;
+        cursor: pointer;
+    }
+
+    #Fr, #Es, #An {
+        padding: 10px;
+    }
+
+    #Fr:hover, #An:hover , #Es:hover {
+    box-shadow: 0 0 10px 5px rgba(0, 0, 255, 0.5);
+    cursor: pointer;
+}
+
+    #toggleModal:focus {
+        box-shadow: none;
+    }  
+
+    .overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        transition: opacity 0.1s ease;
+    }
+
+    
+    .overlay button {
+        position: absolute;
+        font-size: 10px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #312f2f;
+        color: #fff;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    #avatar-choices {
+        width: 530px;
+        min-height: 250px;
+        z-index: 9999;
+        position: fixed;
+        top: 100px;
+        display: none;
+        justify-content: center;
+        border: solid 1px black;
+        background-color: black;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 3px;
+    }
+
+    #avatar-choices img {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    .selected {
+        border: 3px solid red;
+    }
+
+    .bi-house-fill:hover , .fa-bars:hover , .text-danger:hover, .close:hover {
+        background-color: rgb(240, 244, 244);
+        border-radius: 10px;
+    }
+
+
+
+#info-box-status {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  padding: 5px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-top: 10px;
+  z-index: 1;
+}
+
+.card.win { background: linear-gradient(to right, rgb(185, 225, 229), #ffcccc); }
+.card.lose { background: linear-gradient(to right, #ffcccc, rgb(185, 225, 229)); }
+
+.stat-card {
+    display: flex;
+    flex-direction: row;
+}
+
+.stat-victory {
+    flex: 1;
+    margin-right: 5px; 
+}
+
+.stat-defeat {
+    flex: 1;
+    margin-left: 5px;
+}
+
+.card-header {
+    box-shadow: 0 0 5px 2px;
+}
+</style>
+
+<div style="background-color: white;display: flex; align-items: center; justify-content: space-between;">
+    <div style="display: flex; align-items: center;">
+        <a href="/user/" class="info-link">
+            <button type="button" class="btn">
+                <div style="display: flex;">
+                    <i class="bi bi-house-fill" style="font-size: 27px; padding: 8px 15px;"></i>
+                    <div>
+            </button>
+        </a>              
+        
+    </div>
+    <div style="display: flex; align-items: center;">
+        <div>
+            <button type="button" class="btn" data-bs-toggle="modal" id="toggleModal" data-bs-target="#exampleModal">
+                <i class="fas fa-bars" style="font-size: 26px; padding: 8px 18px;"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- <div id="modif-avatar">
+    <button alt="Avatar" onclick="openAvatarChoices()">Avatar</button>
+</div> -->
+
+<div class="container-fluid">
+    <div class="row no-gutters">
+    <!-- ///////////////////////////////////////////////////////////////////////////////////////// -->
+    <div class="col-12" style="padding: 10px;">
+        <div style="height: 53vh; display: flex; justify-content: center; background-color: rgb(185, 225, 229); border-radius: 20px; overflow: auto;">
+            
+            <div id="top" class="d-flex flex-column align-items-center" style="padding: 10px; background-color: rgb(185, 225, 229);">
+                
+                <div class="position-relative d-inline-block" style="padding-top: 30px;">
+                    {% if profil.avatar %}
+                        <div class="d-flex justify-content-center align-items-center"
+                            style="width: 180px; height: 173px; border-radius: 50%; overflow: hidden; position: relative;">
+                            <img src="{{ profil.avatar.url }}" class="img-fluid rounded-circle bg-light" style="width: 100%; height: 100%;" alt="Avatar">
+                        </div>
+                    {% else %}
+                        <div id="profilePhoto" class="d-flex justify-content-center align-items-center" style="width: 180px; height: 173px; border-radius: 50%; overflow: hidden; background-color: none;">
+                            <input type="file" id="fileUploader" style="display:none;" accept="image/*" onchange="handleFileSelect(event)">
+                            <i id="iconPhoto" class="bi bi-person-circle" style="font-size: 11rem;" onclick="openFileUploader()"></i>
+                            <img id="avatarImage" src="{% if profil.avatar %}{{ profil.avatar.url }}{% endif %}" class="img-fluid rounded-circle" style="width: 100%; height: 100%; display: none;" alt="Avatar">
+                        </div>            
+                    {% endif %}
+                    
+                    <div id="status">
+                        <span class="badge rounded-circle p-2 position-absolute 
+                        {% if profil.status == 'active' %}
+                            bg-success
+                        {% elif profil.status == 'inactive' %}
+                            bg-danger
+                        {% elif profil.status == 'in_game' %}
+                            bg-warning
+                        {% else %}
+                            bg-secondary
+                        {% endif %}"
+                        style="top: calc(100% - 12px); left: calc(50% - 8px); border: 3px solid rgb(185, 225, 229)"
+                        > </span>
+                    </div>
+                </div>
+                
+                <div class="container">
+                    <div id="div_photo_chip" style="display: flex; justify-content: center; padding-top: 10px;"></div> 
+                    
+                    <div class="row">
+                        <div class="text-center mt-3">
+                            <div style="display: flex; justify-content: center;">
+                                <div class="position-relative d-inline-flex align-items-center">
+                                    <span id="username" class="me-1">
+                                        <p><strong class="translate">Name:</strong> {{ profil.username }}</p>
+                                    </span>
+                                </div>
+                            </div>
+    
+                            <div style="display: flex; justify-content: center;">
+                                <div class="position-relative d-inline-flex align-items-center">
+                                    <span id="email" class="me-1">
+                                        <p><strong class="translate">Email:</strong> {{ profil.email }}</p>
+                                    </span>
+                                </div>
+                            </div>
+    
+                            <div style="display: flex; justify-content: center;">
+                                <div class="position-relative d-inline-flex align-items-center">
+                                    <span id="pwd" class="me-1">
+                                        <p><strong class="translate">Password:</strong> ********</p>
+                                    </span>
+                                </div>
+                            </div>
+    
+                            <div style="display: flex; justify-content: center;">
+                                <div class="position-relative d-inline-flex align-items-center">
+                                    <span id="bio" class="me-1" style="max-width: 700px; max-height: 180px; word-wrap: break-word;">
+                                        <p class="mb-0"><strong class="translate">Biography:</strong> {{ profil.bio }}</p>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+       <!-- ///////////////////////////////////////////////////////////////////////////////////////// -->
+
+       <!-- <div class="col-6"> 
+        <div style="height: 37vh;background-color: white; padding: 10px; border-radius: 20px;" >
+            <h2 class="text-center translate">Statistics 1v1 Online</h2>
+
+            <div class="w-100 text-center mt-0">
+                <div class="h1">{{ profil.stats.games_played }}</div>
+                <div class="translate">Games played</div>
+            </div>
+            
+            <div class="stat-card" style="padding-top: 25px;">
+                <div class="stat-victory">
+                    <div class="card text-white" style="margin-bottom: 10px;">
+                        <strong><div class="card-header text-center translate" style="color: black;box-shadow: 0 0 10px 5px rgb(76, 126, 76)">Victories</div></strong>
+                        <div class="card-body">
+                            <h5 class="card-title text-center" style="color: black;">{{ profil.stats.win_rate }} %</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-defeat">
+                    <div class="card text-white mb-3">
+                        <strong><div class="card-header text-center translate" style="color: black;box-shadow: 0 0 10px 5px rgb(143, 73, 73)">Defeats</div></strong>
+                        <div class="card-body">
+                            <h5 class="card-title text-center" style="color: black;">{{ profil.stats.lose_rate }} %</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-victory" style="overflow-y: auto;">
+                <div class="card text-white" style="margin-bottom: 10px;">
+                    <div class="card-header text-center translate" style="color: black;"><strong>Goals</strong></div>
+                    <div class="card-body m-0 p-0" style="max-height: 100px;">
+                        <div class="row text-center pt-2 pb-0" style="color: black;">
+                            <div class="col">
+                                <h5 class="card-title">Scored</h5>
+                                <p>{{ profil.stats.ptd_scored }}</p>
+                            </div>
+                            <div class="col">
+                                <h5 class="card-title">Conceded</h5>
+                                <p>{{ profil.stats.ptd_conceded }}</p>
+                            </div>
+                            <div class="col">
+                                <h5 class="card-title">Ratio</h5>
+                                <p>{{ profil.stats.goals_ratio }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    <div class="col-6"> 
+        <div style="height: 37vh;background-color: white; padding: 10px; border-radius: 20px;" >
+            <h2 class="text-center translate">Statistics</h2>
+
+            <!-- Nombre de match joues -->
+            <div class="w-100 text-center mt-0" style="padding: 10px;">
+                <div style="display: flex;">
+                    <div class="translate">Games played :</div>
+                    <div style="padding-left: 5px;" >{{ profil.stats.games_played }}</div>
+                </div>
+            </div>
+            
+            <!-- Carte divisée pour les victoires et les défaites -->
+            <div class="stat-card">
+                <div class="stat-victory">
+                    <div class="card text-white" >
+                        <strong><div class="card-header text-center translate" style="color: black;box-shadow: 0 0 10px 5px rgb(76, 126, 76)">Victories</div></strong>
+                        <div class="card-body">
+                            <h5 class="card-title text-center" style="color: black;">{{ profil.stats.win_rate }} %</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-defeat">
+                    <div class="card text-white mb-3">
+                        <strong><div class="card-header text-center translate" style="color: black;box-shadow: 0 0 10px 5px rgb(143, 73, 73)">Defeats</div></strong>
+                        <div class="card-body">
+                            <h5 class="card-title text-center" style="color: black;">{{ profil.stats.lose_rate }} %</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="stat-victory">
+                <div class="card text-white" style="margin-bottom: 10px;">
+                    <div class="card-header border-dark text-center translate" style="color: black;"><strong>Goals</strong></div>
+                    <div class="card-body m-0 p-0" style="max-height: 100px;">
+                        <div class="row text-center pt-2 pb-0" style="color: black;">
+                            <div class="col">
+                                <h5 class="card-title translate">Scored</h5>
+                                <p>{{ profil.stats.ptd_scored }}</p>
+                            </div>
+                            <div class="col">
+                                <h5 class="card-title translate">Conceded</h5>
+                                <p>{{ profil.stats.ptd_conceded }}</p>
+                            </div>
+                            <div class="col">
+                                <h5 class="card-title translate">Ratio</h5>
+                                <p>{{ profil.stats.goals_ratio }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+      <!-- ///////////////////////////////////////////////////////////////////////////////////////// -->
+    <div class="col-6">
+        <div style="height: 37vh; background-color: white; border-radius: 20px; padding: 10px;">
+            <h2 class="text-center translate" style="padding-top: 10px;">Game history</h2>
+            <div style="overflow-y: auto; height: 80%; border-radius: 5px;">
+                {% for game in games %}
+                <div class="card {% if game.winner == profil.username %}win{% else %}lose{% endif %}" style="margin-bottom: 10px; padding: 5px; border: none;">
+                    <p class="card-text mb-0 text-start" style="font-size: 10px;">
+                        {{ game.end_date|date:"d/m/y H:i" }}
+                    </p>
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center" style="min-width: 0;">
+                            {% if profil.avatar %}
+                                <div class="d-flex justify-content-center align-items-center me-2"
+                                    style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; position: relative; flex-shrink: 0;">
+                                    <img src="{{ profil.avatar.url }}" class="img-fluid rounded-circle" style="width: 100%; height: 100%;" alt="Avatar">
+                                </div>
+                            {% else %}
+                                <div class="d-flex justify-content-center align-items-center me-2"
+                                    style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; background-color: #f0f0f0; flex-shrink: 0;">
+                                    <i class="bi bi-person-circle" style="font-size: 3rem;"></i>
+                                </div>
+                            {% endif %}
+                            <span class="me-2 text-center text-truncate" style="max-width: 100px;">
+                                <span class="translate">{{profil.username}}</span>
+                            </span>
+                        </div>
+                        {%if game.winner == profil.username%}
+                            <span class="me-2 flex-shrink-0">{{ game.winner_points }}</span>
+                            <span class="me-2 text-warning flex-shrink-0" style="font-size: 2em;"><i class="bi bi-lightning-fill"></i></span>
+                            <span class="me-2 flex-shrink-0">{{ game.loser_points }}</span>
+                            <div class="d-flex align-items-center" style="min-width: 0;">
+                                <span class="me-2 text-center text-truncate" style="max-width: 100px;">
+                                <span>{{ game.loser_profil.username }}</span>
+                                </span>
+                                {% if game.loser_profil.avatar %}
+                                    <div class="d-flex justify-content-center align-items-center"
+                                        style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; position: relative; flex-shrink: 0;">
+                                        <img src="{{ game.loser_profil.avatar.url }}" class="img-fluid rounded-circle" style="width: 100%; height: 100%;" alt="Avatar">
+                                    </div>
+                                {% else %}
+                                    <div class="d-flex justify-content-center align-items-center"
+                                        style="width: 50px; height: 47px; border-radius: 50%; overflow: hidden; background-color: #f0f0f0; flex-shrink: 0;">
+                                        <i class="bi bi-person-circle" style="font-size: 3rem;"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {%else%}
+                            <span class="me-2 flex-shrink-0">{{ game.loser_points }}</span>
+                            <span class="me-2 text-warning flex-shrink-0" style="font-size: 2em;"><i class="bi bi-lightning-fill"></i></span>
+                            <span class="me-2 flex-shrink-0">{{ game.winner_points }}</span>
+                            <div class="d-flex align-items-center" style="min-width: 0;">
+                                <span class="me-2 text-center text-truncate" style="max-width: 100px;">
+                                <span>{{ game.winner_profil.username }}</span>
+                                </span>
+                                {% if game.winner_profil.avatar %}
+                                    <div class="d-flex justify-content-center align-items-center"
+                                        style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; position: relative; flex-shrink: 0;">
+                                        <img src="{{ game.winner_profil.avatar.url }}" class="img-fluid rounded-circle" style="width: 100%; height: 100%;" alt="Avatar">
+                                    </div>
+                                {% else %}
+                                    <div class="d-flex justify-content-center align-items-center"
+                                        style="width: 50px; height: 47px; border-radius: 50%; overflow: hidden; background-color: #f0f0f0; flex-shrink: 0;">
+                                        <i class="bi bi-person-circle" style="font-size: 3rem;"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {%endif%}
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+       <!-- ///////////////////////////////////////////////////////////////////////////////////////// -->
+
+    <div id="avatar-choices">
+        <img src="{% static 'images/avatar1.png' %}">
+        <img src="{% static 'images/avatar2.png' %}">
+        <img src="{% static 'images/avatar3.png' %}">
+        <img src="{% static 'images/avatar4.png' %}">
+        <button id="submit-avatar" type="submit">OK</button>
+        <button id="cancel-avatar" type="button">CANCEL</button>
+    </div>
+</div>
+
+
+<div class="modal fade modal-right" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                {% if user.profil.avatar %}
+                <div class="d-flex justify-content-center align-items-center"
+                    style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; position: relative;">
+                    <img src="{{ user.profil.avatar.url }}" class="img-fluid rounded-circle" style="width: 100%; height: 100%;" alt="Avatar">
+                </div>
+            {% else %}
+            <div id="profilePhoto" class="d-flex justify-content-center align-items-center" style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; background-color: #f0f0f0;">
+                <input type="file" id="fileUploader" style="display:none;" accept="image/*" onchange="handleFileSelect(event)">
+                <i id="iconPhoto" class="bi bi-person-circle" style="font-size: 3rem;" onclick="openFileUploader()"></i>
+                <img id="avatarImage" src="{% if profil.avatar %}{{ profil.avatar.url }}{% endif %}" class="img-fluid rounded-circle" style="width: 100%; height: 100%; display: none;" alt="Avatar">
+            </div>            
+            {% endif %}
+                <div class="user-details" style="padding-left: 5px; color: black; padding-top: 10px;">
+                    <div class="user-name" id="user-name" style="font-size: 1rem; word-break: break-word;">{{ user.profil.username }}</div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <a href="/myProfile/" id="Profil" class="translate" data-bs-dismiss="modal">Profile</a>
+                <a href="/chat/" id="Chat" class="translate" data-bs-dismiss="modal">Chat</a>
+                <a href="/logout/" id="Deconnexion" class="translate" data-bs-dismiss="modal">Logout</a>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn translate close" style="border-radius: 10px;" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,222 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<script>
+    
+    window.dispatchEvent(new PopStateEvent('popstate'));
+</script>
+
+<style>
+    body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Tomorrow', sans-serif;
+            overflow: hidden; /* Empêcher le défilement de la page */
+            background: white; /* Dégradé coloré */
+            position: relative;
+        }
+
+    
+    h1 {
+        font-size: 120px;
+        text-align: center;
+        margin-top: 50px;
+        text-shadow: 0 0 10px #00a7b3, /* Ombre bleue */
+                    0 0 20px #00a7b3, /* Ombre bleue */
+                    0 0 30px #00a7b3, /* Ombre bleue */
+                    0 0 40px #00a7b3, /* Ombre bleue */
+                    0 0 50px #00a7b3, /* Ombre bleue */
+                    0 0 60px #00a7b3, /* Ombre bleue */
+                    0 0 70px #00a7b3, /* Ombre bleue */
+                    0 0 80px #00a7b3; /* Ombre bleue */
+        animation: glow 1.5s infinite alternate; /* Animation de l'effet fluo */
+    }
+
+    @keyframes glow {
+        0% {
+            text-shadow: 0 0 10px #00a7b3, /* Ombre bleue */
+                        0 0 20px #00a7b3, /* Ombre bleue */
+                        0 0 30px #00a7b3, /* Ombre bleue */
+                        0 0 40px #00a7b3, /* Ombre bleue */
+                        0 0 50px #00a7b3, /* Ombre bleue */
+                        0 0 60px #00a7b3, /* Ombre bleue */
+                        0 0 70px #00a7b3, /* Ombre bleue */
+                        0 0 80px #00a7b3; /* Ombre bleue */
+        }
+        100% {
+            text-shadow: 0 0 20px #4e69a8, /* Ombre magenta */
+                        0 0 30px #4e69a8, /* Ombre magenta */
+                        0 0 40px #4e69a8, /* Ombre magenta */
+                        0 0 50px #4e69a8, /* Ombre magenta */
+                        0 0 60px #4e69a8, /* Ombre magenta */
+                        0 0 70px #4e69a8, /* Ombre magenta */
+                        0 0 80px #4e69a8, /* Ombre magenta */
+                        0 0 90px #4e69a8; /* Ombre magenta */
+        }
+    }
+
+    .modal-body a {
+        display: block;
+        text-decoration: none;
+        margin-bottom: 10px;
+    }
+
+    .modal-right .modal-dialog {
+        margin-right: 0;
+        margin-left: auto;
+    }
+
+    .modal.fade:not(.show) .modal-dialog {
+        transform: translateX(100%);
+        transition: transform 0.5s ease-out;
+    }
+
+    .modal.show .modal-dialog {
+        transform: translateX(0);
+    }
+
+    .fa-bars {
+        font-size: 36px;
+    }
+
+    .BtnJouer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 100px;
+    }
+
+    .BtnJouer a {
+        text-decoration: none;
+        width: 300px;
+        height: 60px;
+        background-color: #ffffff;
+        color: black;
+        border: 2px solid black;
+        border-radius: 20px;
+        font-size: 20px;
+        display: flex;
+        justify-content: center;
+        padding-top: 10px;
+    }
+
+    .BtnJouer a:hover {
+        transform: scale(1.03);
+        box-shadow: 0 0 10px 5px rgba(0, 0, 255, 0.5);
+    }
+
+    #Profil {
+        padding: 10px;
+        color: black;
+    }
+
+    #Chat {
+        padding: 10px;
+        color: black;
+    }
+
+    #Deconnexion {
+        padding: 10px;
+        color: black;
+    }
+
+    #Chat:hover , #Profil:hover {
+        box-shadow: 0 0 10px 5px rgba(0, 0, 255, 0.5);
+        cursor: pointer;
+        border-radius: 10px;
+    }
+
+    #Deconnexion:hover {
+        box-shadow: 0 0 10px 5px red;
+        cursor: pointer;
+        border-radius: 10px;
+    }
+
+    #Fr, #Es, #An {
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    #Fr:hover, #An:hover , #Es:hover {
+    box-shadow: 0 0 10px 5px rgba(0, 0, 255, 0.5);
+    cursor: pointer;
+}
+
+    .username {
+        margin-left: 10px;
+    }
+
+    #toggleModal:focus {
+        box-shadow: none;
+    }
+
+    .fa-bars:hover , .close:hover {
+        background-color: rgb(240, 244, 244);
+        border-radius: 10px;
+    }
+
+
+</style>
+
+<body>
+    <div class="text-end">
+        <button type="button" class="btn" data-bs-toggle="modal" id="toggleModal" data-bs-target="#exampleModal">
+            <i class="fas fa-bars" style="font-size: 27px; color: black; padding: 8px 15px;"></i>
+        </button>
+    </div>
+    <div style="margin: 10px; display: flex; align-items: center; position: absolute; top: 0; left: 0;">
+    {% if profil.avatar %}
+        <a href="/myProfile/" style="color: black;">
+            <div class="d-flex justify-content-center align-items-center" style="width: 70px; height: 73px; border-radius: 50%; overflow: hidden; position: relative;">
+                <img src="{{ profil.avatar.url }}" class="img-fluid rounded-circle bg-light" style="width: 100%; height: 100%;" alt="Avatar">
+            </div>
+        </a>
+
+    {% else %}
+        <div class="d-flex justify-content-center align-items-center"
+            style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; background-color: #f0f0f0;">
+            <a href="/myProfile/" style="color: black;">
+                <i class="bi bi-person-circle" style="font-size: 3rem;"></i>
+            </a>
+        </div>
+    {% endif %}
+    </div>
+
+    <div class="modal fade modal-right" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    {% if profil.avatar %}
+                        <div class="d-flex justify-content-center align-items-center" style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden;">
+                            <img src="{{ profil.avatar.url }}" class="img-fluid rounded-circle" style="width: 100%; height: 100%;" alt="Avatar">
+                        </div>
+                    {% else %}
+                        <div class="d-flex justify-content-center align-items-center"
+                            style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; background-color: #f0f0f0;">    
+                            <i class="bi bi-person-circle" style="font-size: 3rem;"></i>
+                        </div>
+                    {% endif %}
+                    <div class="user-details" style="padding-left: 5px; color: black; padding-top: 10px;">
+                        <div class="user-name" id="user-name" style="font-size: 1rem; word-break: break-word;">{{ profil.username }}</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <a href="/myProfile/" id="Profil" class="translate" data-bs-dismiss="modal">Profile</a>
+                    <a href="/chat/" id="Chat" class="translate" data-bs-dismiss="modal">Chat</a>
+                    <a href="/logout/" id="Deconnexion" class="translate" data-bs-dismiss="modal">Logout</a>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn translate close" style="border-radius: 10px;" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h1 class="translate" data-francais="Pong Game" data-anglais="Pong Game" data-espagnol="Pong Game">Pong Game</h1>
+    <div class="BtnJouer">
+        <a href="/game/" class="translate">Play</a>
+    </div>
+    
+</body>
+</html>

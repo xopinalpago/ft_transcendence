@@ -1,0 +1,163 @@
+{% load static %}
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        padding: 20px; /* Padding autour du corps */
+    }
+
+    h1 {
+        color: black;
+        text-align: center;
+        padding-top: 50px;
+    }
+
+    .form-container {
+        display: flex;
+        justify-content: space-between; /* Ajustement ici */
+        align-items: flex-start;
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    form {
+        flex: 1;
+        margin-right: 20px;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    textarea {
+        width: 100%;
+        padding: 10px; /* Padding ajouté */
+        margin: 10px 0; /* Ajout de marges verticales */
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box; /* Pour inclure le padding dans la largeur totale */
+    }
+
+    textarea {
+        height: 100px; /* Hauteur de la zone de texte réduite */
+    }
+
+    .submit-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        
+    }
+
+    input[type="submit"] {
+        width: auto; /* Largeur automatique */
+        padding: 10px 20px; /* Padding ajusté */
+        background-color: black;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+        background-color: darkblue;
+    }
+
+    .avatar-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .avatar-title {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .avatar-choices {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .avatar-option {
+        width: 100px;
+        height: 100px;
+        border: 2px solid transparent;
+        border-radius: 50%;
+        overflow: hidden;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+    }
+
+    .avatar-option.selected {
+        border: 2px solid black;
+    }
+
+    .photo-title {
+        font-size: 18px;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+</style>
+
+<h1>Inscription</h1>
+<div class="form-container">
+    <form action="" method="post" id="signupForm" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div style="display: flex">
+            <div style="padding-right: 100px;">
+                <div>
+                    {{ form.username.label_tag }}
+                    {{ form.username|escape }}
+                </div>
+                <div>
+                    {{ form.password.label_tag }}
+                    {{ form.password|escape }}
+                </div>
+                <div>
+                    {{ form.email.label_tag }}
+                    {{ form.email|escape }}
+                </div>
+                <div>
+                    {{ form.bio.label_tag }}
+                    {{ form.bio|escape}}
+                </div>
+            </div>
+
+        <div class="avatar-container">
+            <div class="avatar-title"><strong>Avatar</strong></div>
+            <div id="avatar-choices" class="avatar-choices">
+                {% for value, label in form.predefined_avatar.field.choices %}
+                    {% if value %}
+                        <div class="avatar-option" data-avatar="{{ value }}">
+                            <img src="{% static 'images/'|add:value %}" alt="{{ label }}">
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <input type="hidden" id="id_predefined_avatar" name="predefined_avatar">
+            <div class="photo-title"><strong>Photo</strong></div>
+            <div>
+                <div>
+                    {{ form.avatar.label_tag }}
+                    {{ form.avatar|escape }}
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="submit-container">
+            <input style="padding-left: 100px; padding-right: 100px;" type="submit" name="submit_button" value="signup">
+        </div>
+    </form>
+</div>
+    

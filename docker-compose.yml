@@ -1,20 +1,46 @@
 services:
-  web:
+  transcendence:
+    container_name: transcendence
     build:
-      context: backend
+      context: ./backend
       dockerfile: Dockerfile
     volumes:
-      - ./backend:/usr/src/app/
-    ports:
-      - 8000:8000
+      - ./backend:/usr/src/app
+      - staticfiles:/var/www/static/
+      - mediafiles:/var/www/media/
     depends_on:
       - db
+    env_file:
+      - .env
+
   db:
-    image: postgres:16
+    image: postgres:14
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
       - "POSTGRES_HOST_AUTH_METHOD=trust"
+    env_file:
+      - .env
+
+  nginx:
+    container_name: nginx
+    build:
+      context: .
+      dockerfile: nginx.Dockerfile
+    depends_on:
+      - transcendence
+    ports:
+      - 8000:8000
+    volumes:
+      - staticfiles:/var/www/static/
+      - mediafiles:/var/www/media/
+    env_file:
+      - .env
 
 volumes:
   postgres_data:
+    driver: local
+  staticfiles:
+    driver: local
+  mediafiles:
+    driver: local

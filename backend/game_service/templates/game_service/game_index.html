@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+{% load static %}
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Tomorrow', sans-serif;
+        overflow: hidden;
+    }
+
+    body img {
+        margin: 0;
+        padding-left: 300px;
+    }
+
+    h1 {
+        font-size: 60px;
+        text-align: center;
+    }
+
+    .modal-body a {
+        display: block;
+        text-decoration: none;
+        margin-bottom: 10px;
+    }
+
+    .modal-right .modal-dialog {
+        margin-right: 0;
+        margin-left: auto;
+    }
+
+    .modal.fade:not(.show) .modal-dialog {
+        transform: translateX(100%);
+        transition: transform 0.5s ease-out;
+    }
+
+    .modal.show .modal-dialog {
+        transform: translateX(0);
+    }
+
+    .fa-bars {
+        font-size: 36px;
+    }
+
+    .BtnJouer a {
+        text-decoration: none;
+        width: 300px;
+        height: 60px;
+        background-color: #ffffff;
+        color: black;
+        border: 2px solid black;
+        border-radius: 20px;
+        font-size: 20px;
+        display: flex;
+        justify-content: center;
+        padding-top: 10px;
+    }
+
+    #Chat {
+        padding: 10px;
+        color: black;
+    }
+
+    #Deconnexion {
+        padding: 10px;
+        color: black;
+    }
+
+    #Deconnexion:hover , #Chat:hover {
+        background-color: #00a7b3;
+        cursor: pointer;
+    }
+
+    #Fr, #Es, #An {
+        padding: 10px;
+    }
+
+    #Fr:hover, #An:hover , #Es:hover {
+    border: 2px solid #00a7b3; /* Ajoutez une bordure de 2px de couleur bleue */
+    cursor: pointer;
+}
+
+</style>
+<div class="text-end">
+    <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <i class="fas fa-bars"></i>
+    </button>
+</div>
+<h1>Pong Gameeee</h1>
+<div class="modal fade modal-right" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title translate" data-francais="Menu" data-anglais="Menu" data-espagnol="Menú" id="exampleModalLabel">Menu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <a href="/logout/" id="Deconnexion" class="translate" data-bs-dismiss="modal">Logout</a>
+                <a href="/chat/" id="Chat" class="translate" data-bs-dismiss="modal">Chat</a>
+                <div class="langage-buttons text-center">
+                    <button type="button" id="Fr" class="btn btn-lang lang" data-bs-dismiss="modal" data-lang="fr">Francais</button>
+                    <button type="button" id="An" class="btn btn-lang lang" data-bs-dismiss="modal" data-lang="en">Anglais</button>
+                    <button type="button" id="Es" class="btn btn-lang lang" data-bs-dismiss="modal" data-lang="es">Espagñol</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn translate" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<p>User : {{ profil.user.username|escape }}</p>
+{{ request.user.id|json_script:"user_id"|escape}}
+<div>
+    <select id="user-id-input">
+        {% for user in users %}
+            {% if not user.is_superuser and user != request.user %}
+                <option value="{{ user.id|escape }}">{{ user.username|escape }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+</div>
+<div>
+    <button onclick="createGame()">Make a game</button>
+</div>
+<img src="{% static 'images/Pong.png' %}" alt="image du jeu"

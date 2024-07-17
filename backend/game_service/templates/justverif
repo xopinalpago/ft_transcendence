@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lobby</title>
+    <style>
+        body {
+            font-family: "Tomorrow", sans-serif;
+            overflow: hidden;
+        }
+
+        .modal-body a {
+        display: block;
+        text-decoration: none;
+        margin-bottom: 10px;
+    }
+
+    .modal-right .modal-dialog {
+        margin-right: 0;
+        margin-left: auto;
+    }
+
+    .modal.fade:not(.show) .modal-dialog {
+        transform: translateX(100%);
+        transition: transform 0.5s ease-out;
+    }
+
+    .modal.show .modal-dialog {
+        transform: translateX(0);
+    }
+
+    .fa-bars {
+        font-size: 36px;
+    }
+
+    #Profil {
+        padding: 10px;
+        color: black;
+    }
+
+    #Chat {
+        padding: 10px;
+        color: black;
+    }
+
+    #Deconnexion {
+        padding: 10px;
+        color: black;
+    }
+
+    #Chat:hover , #Profil:hover {
+        box-shadow: 0 0 10px 5px rgba(0, 0, 255, 0.5);
+        cursor: pointer;
+        border-radius: 10px;
+
+    }
+
+    #Deconnexion:hover {
+        box-shadow: 0 0 10px 5px red;
+        cursor: pointer;
+        border-radius: 10px;
+
+    }
+
+    #Fr, #Es, #An {
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    #Fr:hover, #An:hover , #Es:hover {
+    box-shadow: 0 0 10px 5px rgba(0, 0, 255, 0.5);
+    cursor: pointer;
+}
+
+    .username {
+        margin-left: 10px;
+    }
+
+        .infoPage {
+            text-align: center;
+        }
+
+        .infoPage button {
+            background-color: white; /* Couleur de fond blanche */
+            color: black;
+            border: 2px solid black;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .infoPage button:hover {
+            box-shadow: 0 0 10px 5px red;
+            transform: scale(1.03);
+        }
+
+        #tournament_name {
+            font-size: 24px;
+        }
+
+        .player-list-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            overflow-y: auto;
+            max-width: 600px;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 255, 0.5), 0 0 20px rgba(0, 0, 255, 0.5);
+        }
+
+        .player-card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            width: 150px;
+            text-align: center;
+        }
+
+        .player-card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .player-card .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 255, 0.5);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .player-card .username {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .loading-animation {
+            margin: 20px auto;
+            width: 40px;
+            height: 40px;
+            position: relative;
+            transform: rotateZ(45deg);
+        }
+
+        .loading-animation .cube {
+            float: left;
+            width: 50%;
+            height: 50%;
+            position: relative;
+            transform: scale(1.0); /* Ajuster l'échelle pour éviter les superpositions */
+            background-color: transparent; /* Supprimer le fond transparent */
+        }
+
+        .loading-animation .cube:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 255, 0.5);
+            animation: foldcube 2.4s infinite linear both;
+            transform-origin: 100% 100%;
+        }
+
+        .loading-animation .cube2 {
+            transform: scale(1.0) rotateZ(90deg); /* Ajuster l'échelle pour éviter les superpositions */
+        }
+
+        .loading-animation .cube3 {
+            transform: scale(1.0) rotateZ(180deg); /* Ajuster l'échelle pour éviter les superpositions */
+        }
+
+        .loading-animation .cube4 {
+            transform: scale(1.0) rotateZ(270deg); /* Ajuster l'échelle pour éviter les superpositions */
+        }
+
+        .loading-animation .cube2:before {
+            animation-delay: 0.3s;
+        }
+
+        .loading-animation .cube3:before {
+            animation-delay: 0.6s;
+        }
+
+        .loading-animation .cube4:before {
+            animation-delay: 0.9s;
+        }
+
+        @keyframes foldcube {
+            0%, 10% {
+                transform: perspective(140px) rotateX(-180deg);
+                opacity: 0;
+            }
+            25%, 75% {
+                transform: perspective(140px) rotateX(0deg);
+                opacity: 1;
+            }
+            90%, 100% {
+                transform: perspective(140px) rotateY(180deg);
+                opacity: 0;
+            }
+        }
+
+        #toggleModal:focus {
+        box-shadow: none;
+    }
+
+    </style>
+</head>
+<body>
+    <div style="display: flex; align-items: center; justify-content: space-between; background-color: white;">
+        <div style="display: flex; align-items: center;">
+            <a href="/user/" class="info-link">
+                <button type="button" class="btn">
+                    <div style="display: flex;">
+                        <i class="bi bi-house-fill" style="font-size: 27px; padding: 8px 15px;"></i>
+                        <div>
+                </button>
+            </a>              
+        </div>
+        <div style="display: flex; align-items: center;">
+
+            <div>
+                <button type="button" class="btn" data-bs-toggle="modal" id="toggleModal" data-bs-target="#exampleModal">
+                    <i class="fas fa-bars" style="font-size: 26px; padding: 8px 18px;"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div style="padding-bottom: 1%;">
+        <h1 class="translate" style="text-align: center;">Waiting for other players</h1>
+        <div class="loading-animation" style="text-align: center;">
+            <div class="cube cube1"></div>
+            <div class="cube cube2"></div>
+            <div class="cube cube3"></div>
+            <div class="cube cube4"></div>
+        </div>
+    </div>
+    <div style="display: flex; justify-content: center; padding-top: 100px;">
+        <div class="player-list-container" id="player-list"></div>
+    </div>
+    <div class="infoPage" style="text-align: center; padding-top: 30px;">
+        <div style="padding: 10px" id="tournament_name">ID : {{ tournament_name }}</div>
+            {% if request.user.profil == tournament.creator %}
+                <button class="translate" onclick="deleteTournament()">Delete tournament</button>
+            {% else %}
+                <button class="translate" onclick="leaveTournament()">Leaving the tournament</button>
+            {% endif %}
+    </div>
+    {{ request.user.profil.user_id|json_script:"user_id"}}
+
+    <div class="modal fade modal-right" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    {% if user.profil.avatar %}
+                        <div class="d-flex justify-content-center align-items-center" style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden;">
+                            <img src="{{ user.profil.avatar.url }}" class="img-fluid rounded-circle" style="width: 100%; height: 100%;" alt="Avatar">
+                        </div>
+                    {% else %}
+                        <div class="d-flex justify-content-center align-items-center"
+                            style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; background-color: #f0f0f0;">    
+                            <i class="bi bi-person-circle" style="font-size: 3rem;"></i>
+                        </div>
+                    {% endif %}
+                    <div class="user-details" style="padding-left: 5px; color: black; padding-top: 10px;">
+                        <div class="user-name" id="user-name" style="font-size: 1rem; word-break: break-word;">{{ user.profil.username }}</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <a href="/myProfile/" id="Profil" class="translate" data-bs-dismiss="modal">Profile</a>
+                    <a href="/chat/" id="Chat" class="translate" data-bs-dismiss="modal">Chat</a>
+                    <a href="/logout/" id="Deconnexion" class="translate" data-bs-dismiss="modal">Logout</a>
+                    <div class="langage-buttons text-center">
+                        <p class="translate"><strong>Languages:</strong></p>
+                        <button type="button" id="Fr" class="btn btn-lang lang" data-bs-dismiss="modal" data-lang="fr">Francais</button>
+                        <button type="button" id="An" class="btn btn-lang lang" data-bs-dismiss="modal" data-lang="en">Anglais</button>
+                        <button type="button" id="Es" class="btn btn-lang lang" data-bs-dismiss="modal" data-lang="es">Espagñol</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn translate" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

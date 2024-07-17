@@ -1,4 +1,8 @@
-Django
-asgiref
-sqlparse
+asgiref==3.8.1
+Django==4.2.11
+sqlparse==0.4.4
 psycopg2-binary
+python-decouple
+typing_extensions==4.10.0
+channels[daphne]
+pyotp

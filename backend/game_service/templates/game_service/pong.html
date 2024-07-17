@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu Pong</title>
+    <style>
+        body {
+            background: white;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tomorrow', sans-serif;
+            color: #f0f0f0;
+            overflow: hidden;
+        }
+
+        .canvas-container {
+            position: relative;
+            z-index: 2;
+        }
+
+        canvas {
+            margin-top: 20px;
+            height: 60vw; /* Hauteur du viewport moins la hauteur des scores et du canvas */
+            width: 100vw;
+            background-color: black;
+            border-top: 2px solid black; /* Bordure blanche en haut */
+            border-bottom: 2px solid black; /* Bordure blanche en bas */
+        }
+        .resizecanvas {
+            margin-top: 20px;
+            height: calc(100vh - 300px); /* Hauteur du viewport moins la hauteur des scores et du canvas */
+            width: calc((100vh - 300px) / 0.6);
+            margin-right: auto;
+            margin-left: auto;
+            display: block;
+            background-color: black;
+            border-top: 2px solid black;
+            border-bottom: 2px solid black;
+            display: block;
+            margin: auto;
+            border-radius: 10px;
+        }
+
+        .end-msg{
+            font-family: 'Tomorrow', sans-serif;
+            text-shadow: 0 0 10px #00a7b3, 0 0 20px #00a7b3, 0 0 30px #00a7b3,
+             0 0 40px #00a7b3, 0 0 50px #00a7b3, 0 0 60px #00a7b3, 0 0 70px #00a7b3, 
+             0 0 80px #00a7b3;
+            animation: glow 1.5s infinite alternate;
+        }
+
+        @keyframes glow {
+        0% {
+            text-shadow: 0 0 10px #00a7b3, /* Ombre bleue */
+                        0 0 20px #00a7b3, /* Ombre bleue */
+                        0 0 30px #00a7b3, /* Ombre bleue */
+                        0 0 40px #00a7b3, /* Ombre bleue */
+                        0 0 50px #00a7b3, /* Ombre bleue */
+                        0 0 60px #00a7b3, /* Ombre bleue */
+                        0 0 70px #00a7b3, /* Ombre bleue */
+                        0 0 80px #00a7b3; /* Ombre bleue */
+        }
+        100% {
+            text-shadow: 0 0 20px #4e69a8, /* Ombre magenta */
+                        0 0 30px #4e69a8, /* Ombre magenta */
+                        0 0 40px #4e69a8, /* Ombre magenta */
+                        0 0 50px #4e69a8, /* Ombre magenta */
+                        0 0 60px #4e69a8, /* Ombre magenta */
+                        0 0 70px #4e69a8, /* Ombre magenta */
+                        0 0 80px #4e69a8, /* Ombre magenta */
+                        0 0 90px #4e69a8; /* Ombre magenta */
+        }
+    }
+
+
+        .centered-div {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 100px;
+            background-color: none;
+            color: white;
+            text-align: center;
+            line-height: 100px;
+        }
+
+        #scores {
+    background-color: rgb(185, 225, 229);
+    color: black;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 20px;
+    border-radius: 10px;
+    margin: 20px auto;
+    max-width: calc((100vh - 300px) / 0.6);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+}
+
+#scores .name {
+    flex: 1;
+    text-align: center;
+}
+
+.score-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 10px;
+}
+
+
+        .modal-body a {
+            display: block;
+            text-decoration: none;
+            margin-bottom: 10px;
+            color: black;
+        }
+        
+        .modal-right .modal-dialog {
+            margin-right: 0;
+            margin-left: auto;
+        }
+        .modal.fade:not(.show) .modal-dialog {
+            transform: translateX(100%);
+            transition: transform 0.5s ease-out;
+        }
+        .modal.show .modal-dialog {
+            transform: translateX(0);
+        }
+        #Profil, #Chat, #Deconnexion {
+            padding: 10px;
+            color: black;
+            border-radius: 10px;
+        }
+        #Profil:hover, #Chat:hover, #Deconnexion:hover {
+            box-shadow: 0 0 10px 5px rgba(0, 0, 255, 0.5);
+            cursor: pointer;
+        }
+        #Deconnexion:hover {
+            box-shadow: 0 0 10px 5px red;
+        }
+        #Fr, #Es, #An {
+            padding: 10px;
+            border-radius: 10px;
+        }
+        #Fr:hover, #An:hover, #Es:hover {
+            box-shadow: 0 0 10px 5px rgba(0, 0, 255, 0.5);
+            cursor: pointer;
+        }
+        .close:hover {
+            background-color: rgb(240, 244, 244);
+            border-radius: 10px;
+        }
+        #toggleModal:focus {
+            box-shadow: none;
+        }
+        .fa-bars {
+            padding: 5px 15px;
+            font-size: 30px;
+        }
+        .bi-house-fill:hover, .fa-bars:hover {
+            background-color: rgb(240, 244, 244);
+            border-radius: 10px;
+        }
+
+        .circles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .circles li {
+            position: absolute;
+            display: block;
+            list-style: none;
+            width: 20px;
+            height: 40px;
+            background: rgb(185, 225, 229);
+            animation: animate 25s linear infinite;
+            bottom: -300px;
+        }
+
+        .circles li:nth-child(1) {
+            left: 25%;
+            width: 80px;
+            height: 80px;
+            animation-delay: 0s;
+        }
+
+        .circles li:nth-child(2) {
+            left: 10%;
+            width: 20px;
+            height: 20px;
+            animation-delay: 2s;
+            animation-duration: 12s;
+        }
+
+        .circles li:nth-child(3) {
+            left: 70%;
+            width: 20px;
+            height: 20px;
+            animation-delay: 4s;
+        }
+
+        .circles li:nth-child(4) {
+            left: 40%;
+            width: 60px;
+            height: 60px;
+            animation-delay: 0s;
+            animation-duration: 18s;
+        }
+
+        .circles li:nth-child(5) {
+            left: 65%;
+            width: 20px;
+            height: 20px;
+            animation-delay: 0s;
+        }
+
+        .circles li:nth-child(6) {
+            left: 75%;
+            width: 110px;
+            height: 110px;
+            animation-delay: 3s;
+        }
+
+        .circles li:nth-child(7) {
+            left: 35%;
+            width: 150px;
+            height: 150px;
+            animation-delay: 7s;
+        }
+
+        .circles li:nth-child(8) {
+            left: 50%;
+            width: 25px;
+            height: 25px;
+            animation-delay: 15s;
+            animation-duration: 45s;
+        }
+
+        .circles li:nth-child(9) {
+            left: 20%;
+            width: 15px;
+            height: 15px;
+            animation-delay: 2s;
+            animation-duration: 35s;
+        }
+
+        .circles li:nth-child(10) {
+            left: 85%;
+            width: 150px;
+            height: 150px;
+            animation-delay: 0s;
+            animation-duration: 11s;
+        }
+
+        @keyframes animate {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+                border-radius: 0;
+            }
+
+            50% {
+                transform: translateY(-300px) rotate(720deg);
+                opacity: 0.8;
+                border-radius: 50%;
+            }
+
+            100% {
+                transform: translateY(-1000px) rotate(720deg);
+                opacity: 0;
+                border-radius: 50%;
+            }
+        }
+
+        h1 {
+            display: flex;
+            justify-content: center;
+            color: black;
+            font-size: 30px;
+            -webkit-text-stroke: 0.1px black;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+    #scores .name {
+        font-size: 14px; /* Taille de la police pour les noms */
+    }
+    #scores .score-container {
+        font-size: 20px; /* Taille de la police pour les scores */
+    }
+}
+
+
+    </style>
+</head>
+<body>
+    <div style="display: flex; justify-content: space-between; position: relative; z-index: 1;"> <!-- Ajout du z-index -->
+        <a href="/user/" style="display: flex; align-items: center;">
+            <button type="button" class="btn">
+                <div style="display: flex;">
+                    <i class="bi bi-house-fill" style="font-size: 27px; padding: 2px 15px;"></i>
+                </div>
+            </button>
+        </a>
+        <div style="display: flex; align-items: center;">
+            <div>
+                <button type="button" class="btn" data-bs-toggle="modal" style="padding-top: 9px;" id="toggleModal" data-bs-target="#exampleModal">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="BackgroundCanvas">
+        <ul class="circles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+        <h1 class="translate">LOCAL GAME</h1>
+        <div id="scores">
+            <span id="player1Name" class="translate name">Player 1</span>
+            <div class="score-container">
+                <span id="score1">0</span>
+                <span>/</span>
+                <span id="score2">0</span>
+            </div>
+            <span id="player2Name" class="translate name">Player 2</span>
+        </div>
+        <div class="canvas-container">
+            <canvas id="pongCanvas"></canvas>
+            <script type="module" src="../../../auth_service/static/js/matchmaking.js"></script>
+        </div>
+        <div class="centered-div" id="LittleVictory" style="width: 500px; background-color: none;">
+            <h1 id="win_name" class="end-msg" style="font-size: 500%;"></h1>
+        </div>
+        <ul class="circles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+    </ul>
+    </div> 
+
+    <div style="display: flex; justify-content: center; align-items: center; background-color: rgb(231, 228, 228);">
+        <div class="modal fade modal-right" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        {% if user.profil.avatar %}
+                            <div class="d-flex justify-content-center align-items-center" style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden;">
+                                <img src="{{ user.profil.avatar.url|escape }}" class="img-fluid rounded-circle" style="width: 100%; height: 100%;" alt="Avatar">
+                            </div>
+                        {% else %}
+                            <div class="d-flex justify-content-center align-items-center" style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden;">
+                                <i class="bi bi-person-circle" style="font-size: 3rem; color: black;"></i>
+                            </div>
+                        {% endif %}
+                        <div class="user-details" style="padding-left: 5px; color: black; padding-top: 10px;">
+                            <div class="user-name" id="user-name" style="font-size: 1rem; word-break: break-word;">{{ user.profil.username|escape }}</div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <a href="/myProfile/" id="Profil" class="translate" data-bs-dismiss="modal">Profile</a>
+                        <a href="/chat/" id="Chat" class="translate" data-bs-dismiss="modal">Chat</a>
+                        <a href="/logout/" id="Deconnexion" class="translate" data-bs-dismiss="modal">Logout</a>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn translate close" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ request.user.id|json_script:"user_id"|escape}}
+</body>
+</html>

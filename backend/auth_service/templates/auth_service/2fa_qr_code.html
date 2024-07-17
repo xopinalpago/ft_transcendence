@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f4f4f4;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        .custom-submit-button {
+            background-color: rgba(0, 0, 255, 0.5);
+            border: none;
+            color: white;
+            width: 100%;
+            max-width: 320px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+        .custom-submit-button:hover {
+            background-color: rgba(5, 5, 146, 0.5);
+        }
+        .form-container {
+            background: linear-gradient(to bottom right, #ffffff, #f9f9f9);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);
+            max-width: 800px; /* Largeur maximale du conteneur */
+            width: 100%; /* Prend toute la largeur disponible */
+            margin: auto;
+        }
+        .form-row {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .input-token {
+            width: 100%;
+            max-width: 320px;
+            padding: 15px;
+            border: 2px solid rgba(0, 0, 255, 0.5);
+            border-radius: 8px;
+            font-size: 16px;
+            color: #333;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s ease;
+        }
+        .input-token:focus {
+            outline: none;
+            border-color: rgba(0, 0, 255, 0.5);
+        }
+        img.qr-code {
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="justify-content-center">
+            <div>
+                <div class="form-container">
+                    <div class="text-center mb-4">
+                        <h1 style="color: rgba(0, 0, 255, 0.5);">SCAN QR CODE</h1>
+                        <h8 style="color: #777;">Use your authentication app</h8>
+                    </div>
+                    <form method="post" id="2FA-Form" class="w-100">
+                        {% csrf_token %}
+                        <div class="form-row">
+                            <input type="text" name="token" id="token" class="form-control input-token mb-2" placeholder="Enter Token">
+                        </div>
+                        <div class="form-row justify-content-end" style="margin-top: -10px;"> <!-- Réduction de l'espace vertical -->
+                            <button type="submit" class="btn btn-primary custom-submit-button">Verify Code</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

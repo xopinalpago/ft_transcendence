@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      function loadTestPage() {
+        // Effacez le contenu actuel de la page
+        console.log("rendering test page");
+        document.getElementById("content").innerHTML = "";
+
+        // Ajoutez le contenu de la page de test
+        fetch("/test")
+          .then((response) => response.text()) // convertissez la réponse en texte
+          .then((text) => {
+            // Ajoutez le contenu de la page test à la page actuelle
+            document.getElementById("content").innerHTML = text;
+          })
+          .catch((error) => {
+            console.error("Erreur lors du chargement de la page test :", error);
+          });
+      }
+      function loadTest2Page() {
+        // Effacez le contenu actuel de la page
+        console.log("rendering test page");
+        document.getElementById("content").innerHTML = "";
+
+        // Ajoutez le contenu de la page de test
+        fetch("/test2")
+          .then((response) => response.text()) // convertissez la réponse en texte
+          .then((text) => {
+            // Ajoutez le contenu de la page test à la page actuelle
+            document.getElementById("content").innerHTML = text;
+          })
+          .catch((error) => {
+            console.error("Erreur lors du chargement de la page test :", error);
+          });
+      }
+
+      function loadHomePage() {
+        // Effacez le contenu actuel de la page
+        console.log("rendering homepage");
+        document.getElementById("content").innerHTML = "";
+
+        // Ajoutez le contenu de la page de test
+        fetch("")
+          .then((response) => response.text()) // convertissez la réponse en texte
+          .then((text) => {
+            // Ajoutez le contenu de la page test à la page actuelle
+            document.getElementById("content").innerHTML = text;
+          })
+          .catch((error) => {
+            console.error("Erreur lors du chargement de la page test :", error);
+          });
+      }
+
+      window.addEventListener("popstate", function () {
+        // Vérifiez l'URL actuelle et chargez le contenu correspondant
+        console.log("PATH : ", location.pathname);
+        if (location.pathname === "/test") loadTestPage();
+        else if (location.pathname === "/test2") loadTest2Page();
+        else if (location.pathname === "/") loadHomePage();
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("page3").onclick = function () {
+          //   showSection(this.dataset.section);
+          console.log("trying to get in test2");
+          history.pushState({}, "test2", "/test2");
+          loadTest2Page();
+        };
+      });
+    </script>
+  </head>
+  <body>
+    <main id="content">
+      <h1>YOU ARE IN TEST PAGE</h1>
+      <button id="page3">Page 3</button>
+    </main>
+  </body>
+</html>

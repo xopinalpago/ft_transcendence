@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+{% load static %}
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: "Tomorrow", sans-serif;
+  }
+
+  h1 {
+    font-size: 110px;
+        text-align: center;
+        margin-top: 50px;
+        text-shadow: 0 0 10px #00a7b3, /* Ombre bleue */
+                    0 0 20px #00a7b3, /* Ombre bleue */
+                    0 0 30px #00a7b3, /* Ombre bleue */
+                    0 0 40px #00a7b3, /* Ombre bleue */
+                    0 0 50px #00a7b3, /* Ombre bleue */
+                    0 0 60px #00a7b3, /* Ombre bleue */
+                    0 0 70px #00a7b3, /* Ombre bleue */
+                    0 0 80px #00a7b3; /* Ombre bleue */
+        animation: glow 1.5s infinite alternate; /* Animation de l'effet fluo */
+  }
+
+  @keyframes glow {
+        0% {
+            text-shadow: 0 0 10px #00a7b3, /* Ombre bleue */
+                        0 0 20px #00a7b3, /* Ombre bleue */
+                        0 0 30px #00a7b3, /* Ombre bleue */
+                        0 0 40px #00a7b3, /* Ombre bleue */
+                        0 0 50px #00a7b3, /* Ombre bleue */
+                        0 0 60px #00a7b3, /* Ombre bleue */
+                        0 0 70px #00a7b3, /* Ombre bleue */
+                        0 0 80px #00a7b3; /* Ombre bleue */
+        }
+        100% {
+            text-shadow: 0 0 20px #4e69a8, /* Ombre magenta */
+                        0 0 30px #4e69a8, /* Ombre magenta */
+                        0 0 40px #4e69a8, /* Ombre magenta */
+                        0 0 50px #4e69a8, /* Ombre magenta */
+                        0 0 60px #4e69a8, /* Ombre magenta */
+                        0 0 70px #4e69a8, /* Ombre magenta */
+                        0 0 80px #4e69a8, /* Ombre magenta */
+                        0 0 90px #4e69a8; /* Ombre magenta */
+        }
+    }
+  
+  .join_queue_container {
+    display: flex;
+    flex-direction: column; /* Aligner les boutons en colonne */
+    justify-content: center; /* Centrer horizontalement */
+    align-items: center; /* Centrer verticalement */
+    margin-top: 8%;
+  }
+  .join_queue {
+    border-radius: 8px;
+    padding: 10px 40px;
+    border: none;
+    font-size: 20px;
+    transition: all 0.3s ease;
+    width: 20%;
+    margin-bottom: 10px;
+  }
+  .join_queue:hover {
+    transform: scale(1.03);
+  }
+  
+  .join_queue:active {
+    background-color: #555; /* Changer la couleur du fond en gris foncé */
+  }
+
+  #join_local_game, #join_VSIA_game, #join_queue, #create_tournament, #show_tournament{
+    background-color: white;
+    border: 2px solid black;
+  }
+
+  #join_local_game:hover, #join_VSIA_game:hover, #create_tournament:hover, #join_queue:hover, #show_tournament:hover {
+    box-shadow: 0 0 10px 5px rgba(0, 0, 255, 0.5);
+  }
+
+  .modal-tournois {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content-tournois {
+    background-color: #fefefe;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 90%; /* Adjusted width for better responsiveness */
+    max-width: 500px; /* Maximum width for larger screens */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2), 0px 6px 20px rgba(0, 0, 0, 0.19);
+    border-radius: 10px; /* Added border radius for better aesthetics */
+    box-sizing: border-box;
+}
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            border-top: none;
+        }
+
+        .btn-create {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-create:hover {
+            background-color: #0056b3;
+        }
+
+  .tournament-button {
+    display: block;
+    margin-bottom: 10px;
+    padding: 10px;
+    width: 100%;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 255, 0.5);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+  .modal-body a {
+        display: block;
+        text-decoration: none;
+        margin-bottom: 10px;
+    }
+
+    .modal-right .modal-dialog {
+        margin-right: 0;
+        margin-left: auto;
+    }
+
+    .modal-right .modal-dialog {
+        margin-right: 0;
+        margin-left: auto;
+    }
+
+    .modal-right.fade:not(.show) .modal-dialog {
+        transform: translateX(100%);
+        transition: transform 0.5s ease-out;
+    }
+
+    .modal-right.show .modal-dialog {
+        transform: translateX(0);
+    }
+
+    .modal-right .modal-body a {
+        display: block;
+        text-decoration: none;
+        margin-bottom: 10px;
+        color: black; /* Couleur de texte pour les liens */
+    }
+
+    .fa-bars {
+        font-size: 36px;
+    }
+
+    #Profil {
+        padding: 10px;
+        color: black;
+    }
+
+    #Chat {
+        padding: 10px;
+        color: black;
+    }
+
+    #Deconnexion {
+        padding: 10px;
+        color: black;
+    }
+
+    #Chat:hover , #Profil:hover {
+      box-shadow: 0 0 10px 5px rgba(0, 0, 255, 0.5);
+      border-radius: 10px;
+        cursor: pointer;
+    }
+
+    #Deconnexion:hover {
+      box-shadow: 0 0 10px 5px red;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    #Fr, #Es, #An {
+        padding: 10px;
+      border-radius: 10px;
+    }
+
+    #Fr:hover, #An:hover , #Es:hover {
+    box-shadow: 0 0 10px 5px rgba(0, 0, 255, 0.5);
+    cursor: pointer;
+    }
+
+    #toggleModal:focus {
+        box-shadow: none;
+    }  
+
+    .bi-house-fill:hover , .fa-bars:hover , .close2:hover, .bi-book:hover {
+        background-color: rgb(240, 244, 244);
+        border-radius: 10px;
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+}
+
+#loading_icon {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 10000;
+}
+
+.close:hover {
+        background-color: rgb(240, 244, 244);
+        border-radius: 10px;
+    }
+
+    #ModalRules {
+  position: absolute;
+  top: 50px; /* Ajuster la position verticale selon vos besoins */
+  left: 0;
+  transform: translateX(0);
+}
+
+.modal-rules .modal-dialog {
+  margin-top: 0;
+  margin-left: 0;
+  margin-right: auto;
+  transform: none;
+}
+
+.modal-rules.fade .modal-dialog {
+  transform: translateX(-100%);
+  transition: transform 0.5s ease-out;
+}
+
+.modal-rules.show .modal-dialog {
+  transform: translateX(0);
+}
+
+.modal-rules .modal-body {
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+/* Masque la barre de défilement du corps principal lorsque le modal est ouvert */
+.modal-open {
+  overflow: hidden;
+}
+
+/* Ajuste le padding à droite pour compenser la barre de défilement invisible */
+.modal-open .modal {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.modal-body::-webkit-scrollbar {
+    width: 10px; /* Largeur de la scrollbar */
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Couleur de la piste de la scrollbar */
+    border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: #888; /* Couleur de la poignée de la scrollbar */
+    border-radius: 10px;
+}
+
+
+
+</style>
+
+<div style="display: flex; justify-content: space-between;">
+  <div style="display: flex;">
+    <a href="/user/" style="display: flex; align-items: center;">
+        <button type="button" class="btn">
+            <div style="display: flex;">
+              <i class="bi bi-house-fill" style="font-size: 27px; padding: 2px 15px;"></i>
+            <div>
+        </button>
+    </a>
+    <button type="button" class="btn" data-bs-toggle="modal" style="padding-top: 9px;" id="toggleModal" data-bs-target="#ModalRules">
+      <i class="bi bi-book" style="font-size: 27px; color: black; padding: 8px 15px;"></i>
+  </button>
+  </div>
+  <div style="display: flex; align-items: center;">
+      <div>
+          <button type="button" class="btn" data-bs-toggle="modal" style="padding-top: 9px;" id="toggleModal" data-bs-target="#exampleModal">
+              <i class="fas fa-bars" style="font-size: 27px; color: black; padding: 8px 15px;"></i>
+          </button>
+      </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="">
+  <h1 class="translate">Select mode</h1>
+  <div class="join_queue_container">
+
+    <button type="button" id="join_local_game" class="join_queue translate" style="width: 300px;" onclick="startLocalGame()">
+      Local game
+    </button>
+
+    <button type="button" id="join_VSIA_game" class="join_queue translate" style="width: 300px;" onclick="startVSIAGame()">
+      Player vs AI
+    </button>
+
+    <button type="button" id="join_queue" class="join_queue translate" style="width: 300px;" onclick="joinQueue()">
+      1vs1 Online
+    </button>
+    
+    <div id="overlay" style="display: none;"></div>
+        <div id="loading_icon" style="display: none;">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p class="translate" >Waiting for a player...</p>
+        <button class="translate" style="padding: 10px 20px; border-radius: 5px; background: none; color: black; border: 0.5px solid gray" onclick="quitQueueAndCloseModal()">Cancel</button>
+    </div>
+
+  <button type="button" , id="create_tournament" , class="join_queue translate" style="width: 300px;" onclick="openModalCreateTournament()">
+    Create a tournament
+  </button>
+
+  <div id="ModalCreateTournament" class="modal modal-tournois">
+    <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h2 class="modal-title translate" id="ModalCreateTournamentLabel">Tournament Creation</h2>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="closeModalCreateTournament()"></button>
+          </div>
+          <div class="modal-body">
+              <form id="gameForm">
+                  <div class="mb-3">
+                      <label for="player_name_tour" class="form-label translate">Name</label>
+                      <input class=" form-control translate" type="text" id="player_name_tour" name="player_name_tour" style="width: 100%; padding: 10px; border-radius: 5px;" required value="{{ user.profil.username }}"><br>
+                  </div>
+                  <div class="mb-3">
+                      <label for="game_name" class="form-label translate">Tournament name</label>
+                      <input type="text" class="form-control translate" id="game_name" name="game_name" required>
+                  </div>
+                  <div id="error-message" class="text-danger translate" style="display: none;">Invalid tournament name.</div>
+                  <div class="mb-3">
+                      <label for="num_players" class="form-label translate">Number of players:</label>
+                      <select id="num_players" name="num_players" class="form-select" required>
+                          <!-- <option class="translate" value="2">2 Players</option> -->
+                          <option class="translate" value="4">4 Players</option>
+                          <option class="translate" value="8">8 Players</option>
+                          <option class="translate" value="16">16 Players</option>
+                      </select>
+                  </div>
+              </form>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary text-dark bg-light translate" data-bs-dismiss="modal" onclick="closeModalCreateTournament()">Close</button>
+              <button type="button" class="btn btn-success translate" onclick="createTournament()">Create</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <div id="ButtonJoinTournament">
+    {% if is_in_tournament %}
+      <button type="button" , id="show_tournament" , class="join_queue translate" style="width: 300px;" onclick="joinYourTournament()">
+        Join your tournament
+      </button>
+    {% elif is_in_lobby %}
+      <button type="button" , id="show_tournament" , class="join_queue translate" style="width: 300px;" onclick="joinYourLobby()">
+        Join your lobby
+      </button>
+    {% else %}
+      <button type="button" , id="show_tournament" , class="join_queue translate" style="width: 300px;" onclick="openModalTournament()">
+        Join a tournament
+      </button>
+    {% endif %}
+  </div>
+  
+  <div id="ModalTournament" class="modal modal-tournois">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+          <!-- <div class="modal-header">
+          <button type="button" class="btn-close" style="background-color: rgba(128, 128, 128, 0.1); border-radius: 50%; padding: 10px; font-size: 14px;" data-bs-dismiss="modal" aria-label="Close" onclick="closeModalTournament()"></button>
+              <h2 class="modal-title translate" style="font-weight: bold; text-align: left; font-size: 24px;">Tournament in progress</h2>
+          </div> -->
+          <div class="modal-header">
+            <h2 class="modal-title translate" id="ModalCreateTournamentLabel">Tournament in progress</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="closeModalTournament()"></button>
+        </div>
+          <div class="modal-body">
+              <div class="mb-3">
+                  <label for="player_name_tour_join" class="form-label translate">Your name</label>
+                  <input class="translate" type="text" id="player_name_tour_join" name="player_name_tour_join" style="width: 100%; padding: 10px; border-radius: 5px; border: 0.5px solid gray " required value="{{ user.profil.username }}"><br>
+              </div>
+              <div class="mb-3">
+                  <label class="form-label translate">List of current tournaments</label>
+                  <div id="scrollableContainer" class="overflow-auto" style="max-height: 50vh; border: 1px solid gray; border-radius: 10px; padding: 5px;">
+                      <div id="tournamentList"></div>
+                  </div>
+              </div>
+              <div id="error-message-join" class="text-danger" style="display: none;"></div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary text-dark bg-light translate" data-bs-dismiss="modal" style="border-radius: 5px;" onclick="closeModalTournament()" >Close</button>
+          </div>
+      </div>
+  </div>
+</div>
+    
+
+
+  <!-- <button type="button" , id="quit_queue" , class="join_queue" onclick="quitQueue()">
+    quit queue
+  </button> -->
+</div>
+{{ request.user.id|json_script:"user_id"|escape}}
+
+
+<div class="modal fade modal-rules" id="ModalRules" tabindex="-1" aria-labelledby="ModalRulesLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h2 class="modal-title translate" style="margin-left: auto;">RULES</h2>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <p class="modal-text translate">LOCAL GAME</p>
+              <p class="modal-text translate">This is a one-on-one match on the same device. The goal is to score the most points by hitting the ball behind the other player's paddle. The keys for the left player are Z and W, and for the right player, the up and down arrows.</p>
+
+              <p class="modal-text translate">AI MODE</p>
+              <p class="modal-text translate">This is a game against artificial intelligence. You must score the most points by moving your paddle with the up and down arrows.</p>
+
+              <p class="modal-text translate">ONLINE GAME</p>
+              <p class="modal-text translate">This is a game against another player, each on their own device. The objective is to score the most points by moving your paddle with the up and down arrows.</p>
+
+              <p class="modal-text translate">TOURNAMENT</p>
+              <p class="modal-text translate">This consists of multiple matches against other players, each on their own device. You must score the most points by moving your paddle with the up and down arrows, and advance match by match to become the grand winner of the tournament.</p>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary text-dark bg-light translate" data-bs-dismiss="modal" style="border-radius: 5px;">Close</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+<div class="modal fade modal-right" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              {% if user.profil.avatar %}
+              <div class="d-flex justify-content-center align-items-center" style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden;">
+                  <img src="{{ user.profil.avatar.url|escape }}" class="img-fluid rounded-circle" style="width: 100%; height: 100%;" alt="Avatar">
+              </div>
+              {% else %}
+              <div class="d-flex justify-content-center align-items-center"
+                  style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; background-color: #f0f0f0;">
+                  <i class="bi bi-person-circle" style="font-size: 3rem;"></i>
+              </div>
+              {% endif %}
+              <div class="user-details" style="padding-left: 5px; color: black; padding-top: 10px;">
+                  <div class="user-name" id="user-name" style="font-size: 1rem; word-break: break-word;">{{ user.profil.username|escape }}</div>
+              </div>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <a href="/myProfile/" id="Profil" class="translate" data-bs-dismiss="modal">Profile</a>
+              <a href="/chat/" id="Chat" class="translate" data-bs-dismiss="modal">Chat</a>
+              <a href="/logout/" id="Deconnexion" class="translate" data-bs-dismiss="modal">Logout</a>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn translate close" style="border-radius: 10px;" data-bs-dismiss="modal">Close</button>
+          </div>
+      </div>
+  </div>
+</div>
+<!-- <script src="{% static 'js/matchmaking.js' %}"></script> -->
+<!-- <p>User : {{ profil.user.username }}</p> -->
+<!-- <img src="{% static 'images/Pong.png' %}" alt="image du jeu" -->
